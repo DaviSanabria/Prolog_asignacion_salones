@@ -1,0 +1,374 @@
+%distribucion dias
+distribucion_dias(1, lunes, miercoles, viernes).
+
+distribucion_dias(1, martes, jueves).
+
+
+%distribucion horas
+distribucion_horas(1, 6-8, 6-8, 6-8).
+distribucion_horas(2, 8-10, 8-10, 8-10).
+distribucion_horas(3, 10-12, 10-12, 10-12).
+distribucion_horas(4, 12-2, 12-2, 12-2).
+distribucion_horas(5, 2-4, 2-4, 2-4).
+distribucion_horas(6, 4-6, 4-6, 4-6).
+
+distribucion_horas(1, 6-8, 6-8).
+distribucion_horas(2, 8-10, 8-10).
+distribucion_horas(3, 10-12, 10-12).
+distribucion_horas(4, 12-2, 12-2).
+distribucion_horas(5, 2-4, 2-4).
+distribucion_horas(6, 4-6, 4-6).
+
+
+
+%asignatura(nombre, cantidad de dias)
+asignatura(calculo_diferencial, 3).
+asignatura(programacion_basica, 3).
+asignatura(produccion_y_comprension_de_textos, 2).
+asignatura(calculo_integral, 3).
+
+%requisitos
+requisito(calculo_integral, calculo_diferencial).
+
+
+
+%salones
+salon(202, 40).
+salon(201, 40).
+salon(203, 40).
+salon(801, 40).
+salon(307, 40).
+salon(101, 40).
+salon(701, 40).
+salon(703, 40).
+salon(704, 40).
+salon(504, 40).
+salon(500, 40).
+salon(506, 40).
+salon(401, 40).
+salon(601, 40).
+salon(tic, 40).
+salon(802, 40).
+salon(311, 40).
+salon(102, 40).
+
+
+
+%grupos
+grupo(calculo_diferencial, 020-81-1).
+grupo(calculo_diferencial, 020-82-1).
+grupo(calculo_diferencial, 020-83-1).
+grupo(calculo_diferencial, 020-84-1).
+grupo(calculo_diferencial, 020-85-1).
+grupo(calculo_diferencial, 020-86-1).
+grupo(calculo_diferencial, 020-87-1).
+grupo(programacion_basica, 020-81-2).
+grupo(programacion_basica, 020-82-2).
+grupo(programacion_basica, 020-83-2).
+grupo(programacion_basica, 020-84-2).
+grupo(produccion_y_comprension_de_textos, 020-81-5).
+grupo(produccion_y_comprension_de_textos, 020-82-5).
+
+
+
+
+
+%horario_grupo(grupo, distr. dias, distr. horas)
+horario_grupo(020-81-1, 1, 1).
+horario_grupo(020-82-1, 1, 5).
+horario_grupo(020-83-1, 1, 1).
+horario_grupo(020-84-1, 1, 4).
+horario_grupo(020-85-1, 1, 2).
+horario_grupo(020-86-1, 1, 5).
+horario_grupo(020-87-1, 1, 1).
+horario_grupo(020-81-2, 1, 2).
+horario_grupo(020-82-2, 1, 4).
+horario_grupo(020-83-2, 1, 2).
+horario_grupo(020-84-2, 1, 6).
+horario_grupo(020-85-2, 1, 2).
+horario_grupo(020-81-5, 1, 2).
+horario_grupo(020-82-5, 1, 5).
+
+
+
+
+
+%salones asignados al grupo
+salon_grupo(020-81-1, 202, 202, 201).
+salon_grupo(020-82-1, 202, 202, 201).
+salon_grupo(020-83-1, 203, 201, 203).
+salon_grupo(020-84-1, 202, 202, 201).
+salon_grupo(020-85-1, 202, 202, 202).
+salon_grupo(020-86-1, 801, 201, 307).
+salon_grupo(020-87-1, 802, 102, 311).
+salon_grupo(020-81-2, 701, 504, 401).
+salon_grupo(020-82-2, 801, 505, 505).
+salon_grupo(020-83-2, 101, 701, 703).
+salon_grupo(020-84-2, 701, 500, 506).
+salon_grupo(020-85-2, 704, 704, 601).
+salon_grupo(020-81-5, tic,  204).
+salon_grupo(020-82-5, tic,  204).
+
+
+
+
+% Hechos y reglas
+:- dynamic salon/2, horario_grupo/3, grupo/2, salon_grupo/4, salon_grupo/3, asignatura/2, requisito/2.
+menu:-
+    nl,nl,write('Seleccione el menu que desee:'),nl,write('a) menu agregar'),nl,write('b) menu eliminar'),nl,write('c) menu asignaciones'),nl,
+    write('escriba la letra que representa la opción deseada (terminando con punto)'), read(Respuesta),
+    ((Respuesta==a)-> menu_agregar
+    ;(Respuesta==b)-> menu_eliminar
+    ;(Respuesta==c)-> menu_asignar
+    ; write('desea repetir este menu? si/no'), read(Repetir), (Repetir==si)->menu;fail).
+
+menu_agregar:-
+	nl,nl,write('a) grupo'),nl,write('b) salon'),nl,write('c) asignatura'),nl
+        ,write('escriba la letra que representa la opción deseada (terminando con punto)'),read(Respuesta),nl,
+        ((Respuesta==a)->agregar_grupo;
+        (Respuesta==b)->agregar_salon;
+        (Respuesta==c)->agregar_asignatura;
+        write('desea repetir este menu? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu_agregar;
+        nl, write('desea repetir el menu principal? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu;fail).
+agregar_salon:-
+	nl,nl,write('Indique el numero del salon (terminando con punto)'),  read(Salon), nl,
+        (salon(Salon, _)->write('salon existente'), menu_agregar;
+        write('Indique el numero de puestos del salon (terminando con punto)'),  read(Puestos), nl,
+	assert(salon(Salon, Puestos)))
+        , write('Salon creado, desea volver a agregar si/no'), read(Repetir), (Repetir==si)->menu_agregar; menu.
+agregar_grupo:-
+	nl,nl,write('Indique el nombre de la asignatura'),  read(Asignatura), nl,
+	((asignatura(Asignatura,_))-> write('Indique el numero del grupo a asignar (terminando con punto)'), read(Grupo),
+        (grupo(_,Grupo)->write('Ya existe este grupo'),nl,menu_agregar;
+        (asignatura(Asignatura,Cantidad)),
+        (Cantidad==2)-> agregar_horario_2(Asignatura,Grupo)
+        ; agregar_horario_3(Asignatura,Grupo)));nl, write('asignatura inexistente'),nl, menu_agregar.
+
+
+agregar_horario_2(Asignatura, Grupo):-
+        nl,
+        write('seleccione una de las siguientes distribuciones de horario'),nl,
+        write('1) 6-8, 6-8'), nl,
+        write('2) 8-10, 8-10'), nl,
+        write('3) 10-12, 10-12'), nl,
+        write('4) 12-2, 12-2'), nl,
+        write('5) 2-4, 2-4'), nl,
+        write('6) 4-6, 4-6'), nl,
+        read(Horas),
+        write('seleccione una de las siguientes distribuciones de dias'),nl,
+        write('1) martes, jueves'), nl,
+        read(Dias),
+        (distribucion_horas(Horas, _, _),distribucion_dias(Dias, _, _))-> assert(grupo(Asignatura,Grupo)), assert(horario_grupo(Grupo,Dias,Horas))
+        ;menu_agregar.
+
+agregar_horario_3(Asignatura, Grupo):-
+    nl,
+    write('seleccione una de las siguientes distribuciones de horario'),nl,
+    write('1) 6-8, 6-8, 6-8'), nl,
+    write('2) 8-10, 8-10, 8-10'), nl,
+    write('3) 10-12, 10-12, 10-12'), nl,
+    write('4) 12-2, 12-2, 12-2'), nl,
+    write('5) 2-4, 2-4, 2-4'), nl,
+    write('6) 4-6, 4-6, 4-6'), nl,
+    read(Horas),
+    write('seleccione una de las siguientes distribuciones de dias'),nl,
+    write('1) lunes, miercoles, viernes'), nl,
+    read(Dias),
+    (distribucion_horas(Horas, _,_,_),distribucion_dias(Dias, _, _, _))-> assert(grupo(Asignatura,Grupo)), assert(horario_grupo(Grupo,Dias,Horas))
+        ;menu_agregar.
+
+agregar_asignatura:-
+    write('Indique el nombre de la asignatura (terminando con punto)'),  read(Asignatura), nl,
+    (asignatura(Asignatura,_)->write('asignatura existente'), menu_agregar;
+    write('Indique el numero dias que se ve esta asignatura (terminando con punto)'),  read(Cantidad), nl,
+    assert(asignatura(Asignatura, Cantidad)))
+    ,write('Asignatura creada, desea volver a agregar si/no'), read(Repetir), (Repetir==si)->menu_agregar; menu.
+
+menu_eliminar:-
+    nl, write('a) grupo'),nl,write('b) salon'),nl,write('c) asignatura'),nl
+    ,write('escriba la letra que representa la opción deseada (terminando con punto)'),read(Respuesta),nl,
+    ((Respuesta==a)->eliminar_grupo;
+    (Respuesta==b)->eliminar_salon;
+    (Respuesta==c)->eliminar_asignatura;
+    write('desea repetir este menu? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu_eliminar;
+    nl, write('desea repetir el menu principal? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu;fail).
+
+
+eliminar_salon:-
+    write('Indique el numero del salon (terminando con punto)'),  read(Salon), nl,
+    (salon(Salon, _)->
+    (salon(Salon, Puestos)),retract(salon(Salon,Puestos)), (eliminar_salon_grupo(Salon); write('Salon eliminado, desea volver a eliminar si/no'), read(Repetir), (Repetir==si)->menu_eliminar; menu))
+    ;write('salon no existente'),nl, menu_eliminar.
+
+eliminar_salon_grupo(Salon):-
+    (salon_grupo(Grupo,Salon,Salon2,Salon3),retract(salon_grupo(Grupo,Salon,Salon2,Salon3))
+    ; salon_grupo(Grupo1,Salon4,Salon,Salon5),retract(salon_grupo(Grupo1,Salon4,Salon,Salon5))
+    ; salon_grupo(Grupo2,Salon6,Salon7,Salon),retract(salon_grupo(Grupo2,Salon6,Salon7,Salon))
+    ), (salon_grupo(_,Salon,_,_)->eliminar_salon_grupo(Salon);
+      salon_grupo(_,_,Salon,_)->eliminar_salon_grupo(Salon);
+      salon_grupo(_,_,_,Salon)->eliminar_salon_grupo(Salon)).
+
+
+eliminar_grupo:-
+    nl,nl, write('Indique el numero del grupo a eliminar (terminando con punto)'),
+    read(Grupo),
+    grupo(Asignatura, Grupo), retract(grupo(Asignatura, Grupo)),(asignatura(Asignatura,Cantidad),
+    horario_grupo(Grupo, Dias, Horas), retract(horario_grupo(Grupo, Dias, Horas))),
+    (Cantidad==2-> salon_grupo(Grupo, Salon1, Salon2), retract(salon_grupo(Grupo, Salon1, Salon2))
+    ; salon_grupo(Grupo, Salon1, Salon2, Salon3), retract(salon_grupo(Grupo, Salon1, Salon2, Salon3))),
+    (write('Grupo eliminado, desea volver a eliminar si/no'), read(Repetir), (Repetir==si)->menu_eliminar; menu
+    )
+    .
+
+eliminar_grupo(Grupo, Cantidad):-
+    grupo(_,Grupo)->grupo(Asignatura, Grupo), retract(grupo(Asignatura, Grupo)),
+    horario_grupo(Grupo, Dias, Horas), retract(horario_grupo(Grupo, Dias, Horas)),
+    (Cantidad==2-> salon_grupo(Grupo, Salon1, Salon2), retract(salon_grupo(Grupo, Salon1, Salon2))
+    ; salon_grupo(Grupo, Salon1, Salon2, Salon3), retract(salon_grupo(Grupo, Salon1, Salon2, Salon3))).
+
+eliminar_asignatura:-
+    nl,nl, write('Ingrese el nombre de la asignatura a eliminar (terminado con punto)'),
+    read(Asignatura),
+    (asignatura(Asignatura, _)->
+    asignatura(Asignatura, Cantidad), retract(asignatura(Asignatura, Cantidad)),  eliminar_grupos(Asignatura, Cantidad), eliminar_requisitos(Asignatura)
+    );
+    (nl, write('Asignatura eliminada, desea volver a eliminar si/no'), read(Repetir), (Repetir==si)->menu_eliminar; menu).
+
+eliminar_requisitos(Asignatura):-
+    ((requisito(Asignatura, Asignatura2), eliminar_requisito(Asignatura, Asignatura2));(requisito(Asignatura3, Asignatura), eliminar_requisito(Asignatura3, Asignatura)))
+    , ((requisito(Asignatura, _);requisito(_, Asignatura))->
+      eliminar_requisitos(Asignatura)
+      );nl,write('requisitos asociados eliminados exitosamente'), nl
+    .
+
+eliminar_grupos(Asignatura, Cantidad):-
+    grupo(Asignatura, Grupo), eliminar_grupo(Grupo, Cantidad),
+    (grupo(Asignatura, _)-> eliminar_grupos(Asignatura, Cantidad)); nl, write('Grupos eliminados exitosamente'), nl.
+
+menu_asignar:-
+    nl, write('a) asignar un salon'),
+    nl,write('b) asignar requisito'),
+    nl,write('c) eliminar una asignacion de salon'),
+    nl,write('d) eliminar una asignacion de requisito'),
+    nl,write('escriba la letra que representa la opción deseada (terminando con punto)'),read(Respuesta),nl,
+    ((Respuesta==a)->asignar_salones;
+    (Respuesta==b)->asignar_requisito;
+    (Respuesta==c)->eliminar_asignacion_salon;
+    (Respuesta==d)->eliminar_requisito;
+    write('desea repetir este menu? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu_eliminar;
+    nl, write('desea repetir el menu principal? si/no (terminando con punto)'), read(Repetir), (Repetir==si)->menu;fail).
+
+
+
+
+
+asignar_salones:-
+    nl, write('indique cual es el grupo al que quiere asignar salón (minusculas con punto final.)'), nl,
+    read(Grupo),
+    (grupo(_,Grupo)->
+    horario_grupo(Grupo, Dias, Horas),
+    grupo(Asignatura, Grupo),
+    asignatura(Asignatura, Cantidad),
+    ((salon_grupo(Grupo,_,_);salon_grupo(Grupo,_,_,_))->
+        write('Este grupo ya posee un salón asignado'), menu;
+    (write('Ingrese el numero del salón'), read(Salon),
+     salon(Salon,_)->
+    (   comprobar_asignacion(Grupo, Salon)-> write('Salón asignado correctamente'), menu
+    ;   nl,recomendacion(Dias, Horas, Cantidad)
+    )
+    ;   write('Salon inexistente, imposible asignar.'), nl ,
+        recomendacion(Dias, Horas, Cantidad))
+    )
+    ;write('grupo inexistente'),menu)
+    .
+
+comprobar_asignacion(Grupo, Salon):-
+    %verifique el horario del grupo
+    horario_grupo(Grupo, Dias, Horas),
+    grupo(Asignatura, Grupo),
+    asignatura(Asignatura, Cantidad),
+
+    %contraste el horario con la disponibilidad
+    contraste_grupos(Dias, Horas, Salon, Cantidad, Grupo).
+
+contraste_grupos(Dias, Horas, Salon, Cantidad, AGrupo):-
+    (((salon_grupo(Grupo, Salon,_);salon_grupo(Grupo, _,Salon); salon_grupo(Grupo, Salon, _, _);salon_grupo(Grupo, _, _, Salon);salon_grupo(Grupo, _, Salon, _))
+    ,grupo(GAsignatura,Grupo), asignatura(GAsignatura, GCantidad), horario_grupo(Grupo, Gdias, Ghoras), GCantidad == Cantidad, Gdias==Dias, Ghoras==Horas
+    )->nl, write('presenta cruce con el grupo: '), write(Grupo), fail
+    );  (Cantidad == 2->assert(salon_grupo(AGrupo, Salon, Salon))
+        ;   assert(salon_grupo(AGrupo, Salon, Salon, Salon))
+    ).
+recomendacion(Dias, Horas, Cantidad):-
+    ( (salon(Salon,_), not(no_aplica(Salon, Dias, Horas, Cantidad)))
+    ->  write('se recomienda el salon: '), write(Salon), menu_asignar
+    );
+    nl,write('No hay salon disponible'), menu.
+
+no_aplica(Salon, Dias, Horas, Cantidad):-
+    ((salon_grupo(Grupo, Salon,_);salon_grupo(Grupo, _,Salon); salon_grupo(Grupo, Salon, _, _);salon_grupo(Grupo, _, _, Salon);salon_grupo(Grupo, _, Salon, _))
+    ,grupo(GAsignatura,Grupo), asignatura(GAsignatura, GCantidad), horario_grupo(Grupo, Gdias, Ghoras), GCantidad == Cantidad, Gdias==Dias, Ghoras==Horas
+    )
+    .
+
+%eliminación de asignación del salón
+eliminar_asignacion_salon:-
+    nl, write('indique cual es el grupo al que quiere eliminar asignacion (minusculas con punto final.)'), nl,
+    read(Grupo),
+    (grupo(_, Grupo)->
+    ((salon_grupo(Grupo, _,_); salon_grupo(Grupo, _, _, _))
+    ->  (salon_grupo(Grupo, Salon1, Salon2, Salon3),retract(salon_grupo(Grupo, Salon1, Salon2, Salon3));salon_grupo(Grupo, Salon4, Salon5),retract(salon_grupo(Grupo, Salon4, Salon5)))
+    , write('asignacion eliminada correctamente'), menu
+    ); write('no posee asignacion'), menu
+    );
+    write('grupo inexistente'), menu.
+
+
+asignar_requisito:-
+    nl, write('ingrese la asignatura a la que desea adicionar el requisito (minusculas con punto final.)'), nl,
+    read(Asignatura1),
+    (asignatura(Asignatura1, _)->
+    nl, write('ingrese la asignatura requisito (minusculas y punto final)'), nl
+    ,read(Asignatura2),
+    (asignatura(Asignatura2,_)->
+    (not(requisito(Asignatura1,Asignatura2))-> assert(requisito(Asignatura1, Asignatura2))
+    );write('previamente asignada'), nl, menu_asignar
+    );write('asignatura inexistente'), nl, menu_asignar
+    );
+    nl,write('asignatura inexistente'), nl, menu_asignar.
+
+eliminar_requisito:-
+    nl, write('ingrese la asignatura a la que desea retirar el requisito (minusculas con punto final.)'), nl,
+    read(Asignatura1),
+    (asignatura(Asignatura1, _)->
+    nl, write('ingrese la asignatura requisito (minusculas y punto final)'), nl
+    ,read(Asignatura2),
+    (asignatura(Asignatura2,_)->
+    ((requisito(Asignatura1,Asignatura2))-> retract(requisito(Asignatura1, Asignatura2))
+    );write('no existe el requisito'), nl, menu_asignar
+    );write('asignatura inexistente'), nl, menu_asignar
+    );
+    nl,write('asignatura inexistente'), nl, menu_asignar.
+
+eliminar_requisito(Asignatura, Asignatura2):-
+    retract(requisito(Asignatura, Asignatura2)).
+
+
+%comprobantes
+
+mostrar_salones:-listing(salon).
+
+mostrar_grupos:-listing(grupo).
+
+mostrar_asignaturas:-listing(asignatura).
+
+mostrar_s_g_a:-listing(salon), listing(grupo), listing(asignatura).
+
+mostrar_e_salon:-listing(salon), listing(salon_grupo).
+
+mostrar_e_grupo:- listing(grupo), listing(horario_grupo), listing(salon_grupo).
+
+mostrar_e_asignatura:- listing(asignatura), listing(grupo), listing(horario_grupo), listing(salon_grupo).
+
+mostrar_asignacion:-listing(salon_grupo).
+
+mostrar_requisitos:-listing(requisito), listing(asignatura).
